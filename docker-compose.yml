@@ -1,0 +1,31 @@
+services:
+
+  weather-nats:
+    image: nats
+    container_name: weather-nats
+    restart: always
+    networks:
+      - weather-network
+
+  weather-gateway:
+    image: weather-gateway
+    container_name: weather-gateway
+    restart: always
+    depends_on:
+      - weather-nats
+    build:
+      context: ./weather-gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - ${GATEWAY_PORT}:${GATEWAY_PORT}
+    volumes:
+      - /home/node/app/node_modules
+      - ./weather-gateway:/home/node/app
+    environment:
+      GATEWAY_PORT: ${GATEWAY_PORT}
+      NATS_SERVER: ${NATS_SERVER}
+    networks:
+      - weather-network
+
+networks:
+  weather-network:

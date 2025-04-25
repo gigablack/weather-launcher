@@ -1,0 +1,3 @@
+[submodule "weather-gateway"]
+	path = weather-gateway
+	url = git@github.com:gigablack/weather-gateway.git
