@@ -1,3 +1,6 @@
 [submodule "weather-gateway"]
 	path = weather-gateway
 	url = git@github.com:gigablack/weather-gateway.git
+[submodule "weather-autocomplete-ms"]
+	path = weather-autocomplete-ms
+	url = git@github.com:gigablack/weather-autocomplete-ms.git

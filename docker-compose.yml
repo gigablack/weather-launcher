@@ -27,5 +27,53 @@ services:
     networks:
       - weather-network
 
+  weather-autocomplete-ms:
+    image: weather-autocomplete-ms
+    container_name: weather-autocomplete-ms
+    restart: always
+    depends_on:
+      - weather-nats
+      - weather-autocomplete-mongo
+    build:
+      context: ./weather-autocomplete-ms
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /home/node/app/node_modules
+      - ./weather-autocomplete-ms:/home/node/app
+    environment:
+      NATS_SERVER: ${NATS_SERVER}
+      MONGODB_URI: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@weather-autocomplete-mongo:27017/weather?authSource=admin
+      REDIS_URI: redis://weather-autocomplete-redis:6379
+      REDIS_CACHE_TTL: ${AUTOCOMPLETE_REDIS_CACHE_TTL}
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
+      WEATHER_API_BASE_URL: ${WEATHER_API_BASE_URL}
+    networks:
+      - weather-network
+
+  weather-autocomplete-mongo:
+    image: mongo
+    container_name: weather-autocomplete-mongo
+    restart: always
+    volumes:
+      - weather-autocomplete-mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    networks:
+      - weather-network
+
+  weather-autocomplete-redis:
+    image: redis:alpine
+    container_name: weather-autocomplete-redis
+    restart: always
+    volumes:
+      - weather-autocomplete-redis-data:/data
+    networks:
+      - weather-network
+
 networks:
   weather-network:
+
+volumes:
+  weather-autocomplete-mongo-data:
+  weather-autocomplete-redis-data:
